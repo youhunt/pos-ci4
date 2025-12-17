@@ -1,0 +1,22 @@
+{
+  "name": "Pena POS Sistem",
+  "short_name": "Pena POS",
+  "description": "PWA untuk sinkronisasi produk dan transaksi POS offline-first",
+  "start_url": "index.html",
+  "display": "standalone",
+  "theme_color": "#4f46e5",
+  "background_color": "#f4f4f9",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

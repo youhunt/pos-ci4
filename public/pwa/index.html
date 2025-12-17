@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PWA Modern</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;family=K2D:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="pwa/css/style.css">
+  <link rel="manifest" href="pwa/manifest.json">
+</head>
+<body>
+
+  <header>
+    <!-- <h1>PWA Produk</h1>
+    <button id="btn-sync">Sync Now</button> -->
+     <nav>
+        <button data-page="dashboard" class="nav-btn active">Dashboard</button>
+        <button data-page="pos" class="nav-btn">POS</button>
+        <button data-page="transactions" class="nav-btn">Transaksi</button>
+        <button data-page="reports" class="nav-btn">Laporan</button>
+        <button data-page="discounts" class="nav-btn">Diskon</button>
+    </nav>
+  </header>
+
+  <main>
+     <!-- DASHBOARD PAGE -->
+    <section id="page-dashboard" class="page active">
+        <h2 class="page-title">Dashboard</h2>
+
+        <div class="summary-grid">
+        <div class="summary-card">
+            <label>Penjualan Hari Ini</label>
+            <h3 id="sum-today">Rp 0</h3>
+        </div>
+        <div class="summary-card">
+            <label>Transaksi Pending</label>
+            <h3 id="sum-pending">0</h3>
+        </div>
+        <div class="summary-card">
+            <label>Produk</label>
+            <h3 id="sum-products">0</h3>
+        </div>
+        </div>
+
+        <div class="chart-card">
+        <canvas id="sales-chart"></canvas>
+        </div>
+
+        <div class="quick-actions">
+        <button id="go-pos">Buka POS</button>
+        <button id="btn-sync-dashboard">Sync Sekarang</button>
+        </div>
+    </section>
+
+    <!-- POS PAGE -->
+    <section id="page-pos" class="page">
+        <div id="product-list" class="grid-container"></div>
+    </section>
+
+    <!-- TRANSAKSI PAGE -->
+    <section id="page-transactions" class="page">
+        <h2>Riwayat Transaksi</h2>
+        <div id="transaction-list"></div>
+    </section>
+
+    <!-- LAPORAN PAGE -->
+    <section id="page-reports" class="page">
+        <h2>Laporan</h2>
+        <p>Coming soon...</p>
+    </section>
+
+    <!-- DISKON PAGE -->
+     <section id="page-discounts" class="page">
+        <h2 class="page-title">Diskon / Promo</h2>
+
+        <div class="discount-tabs">
+            <button class="disc-tab active" data-target="disc-active">Promo Aktif</button>
+            <button class="disc-tab" data-target="disc-products">Produk Diskon</button>
+            <button class="disc-tab" data-target="disc-settings">Setting Diskon</button>
+        </div>
+
+        <div id="disc-active" class="disc-content active">
+            <h3>Promo Aktif</h3>
+            <div id="promo-list"></div>
+        </div>
+
+        <div id="disc-products" class="disc-content">
+            <h3>Produk yang Sedang Diskon</h3>
+            <div id="promo-products"></div>
+        </div>
+
+        <div id="disc-settings" class="disc-content">
+            <h3>Setting Diskon</h3>
+            <p>*Hanya admin atau supervisor*</p>
+            <div id="promo-settings"></div>
+        </div>
+    </section>
+  </main>
+
+  <aside id="cart-sidebar">
+    <h2>Cart</h2>
+    <div id="cart-items">
+        <p>Belum ada item</p>
+    </div>
+    <div id="cart-summary">
+        <p>Subtotal: Rp <span id="subtotal">0</span></p>
+        <p>Diskon: Rp <span id="discount">0</span></p>
+        <p><strong>Total: Rp <span id="total">0</span></strong></p>
+    </div>
+    <button id="btn-checkout">Checkout</button>
+    <h2>Pending Transaksi</h2>
+    <div id="pending-list">
+    <p>Belum ada transaksi</p>
+    </div>
+    <p>Pembayaran:</p>
+    <select id="payment-method">
+        <option value="cash">Tunai</option>
+        <option value="ewallet">E-Wallet</option>
+        <option value="transfer">Transfer</option>
+    </select>
+
+  </aside>
+
+  <footer>
+    <p>&copy; 2025 Pena POS</p>
+  </footer>
+
+  <script src="pwa/js/db.js"></script>
+  <script src="pwa/js/sync.js"></script>
+  <script src="pwa/js/app.js"></script>
+</body>
+</html>

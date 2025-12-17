@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pena POS — Demo</title>
+    <link rel="stylesheet" href="pos/css/style.css">
+    <style>
+        * {
+            outline: 1px solid rgba(255, 0, 0, 0.2);
+        }
+    </style>
+
+</head>
+
+<body>
+    <header>
+        <nav class="nav-bar">
+            <button class="nav-btn active" data-page="dashboard">Dashboard</button>
+            <button class="nav-btn" data-page="pos">POS</button>
+            <button class="nav-btn" data-page="transactions">Transaksi</button>
+            <button class="nav-btn" data-page="reports">Laporan</button>
+            <div class="nav-dropdown">
+                <button class="nav-btn" data-page="discounts">Diskon ▾</button>
+            </div>
+        </nav>
+        <button id="btn-toggle-cart" class="header-cart" aria-label="Open cart">🛒</button>
+    </header>
+    <main> <!-- Dashboard -->
+        <section id="page-dashboard" class="page active">
+            <h2 class="page-title">Dashboard</h2>
+            <div class="summary-grid">
+                <div class="summary-card"><label>Penjualan Hari Ini</label>
+                    <h3 id="sum-today">Rp 0</h3>
+                </div>
+                <div class="summary-card"><label>Transaksi Pending</label>
+                    <h3 id="sum-pending">0</h3>
+                </div>
+                <div class="summary-card"><label>Produk</label>
+                    <h3 id="sum-products">0</h3>
+                </div>
+            </div>
+        </section> <!-- POS -->
+        <section id="page-pos" class="page">
+            <h2 class="page-title">POS</h2> <!-- POS sub-tabs -->
+            <div class="pos-tabs">
+                <button class="pos-tab active" data-tab="tab-produk">Produk</button>
+                <button class="pos-tab" data-tab="tab-kategori">Kategori</button>
+                <button class="pos-tab" data-tab="tab-promo">Promo Aktif</button>
+                <button class="pos-tab" data-tab="tab-produk-diskon">Produk Diskon</button>
+                <button class="pos-tab" data-tab="tab-setting-diskon">Setting Diskon</button>
+            </div>
+            <div id="tab-produk" class="pos-tab-content active">
+                <div id="product-list" class="grid-container"></div>
+            </div>
+            <div id="tab-kategori" class="pos-tab-content">
+                <div id="category-list">(Kategori placeholder)</div>
+            </div>
+            <div id="tab-promo" class="pos-tab-content">
+                <div id="promo-active-list" class="discount-list"></div>
+            </div>
+            <div id="tab-produk-diskon" class="pos-tab-content">
+                <div id="promo-product-list"></div>
+            </div>
+            <div id="tab-setting-diskon" class="pos-tab-content">
+                <div id="promo-settings-list"></div>
+            </div>
+        </section> <!-- Transactions -->
+        <section id="page-transactions" class="page">
+            <h2 class="page-title">Transaksi</h2>
+            <div id="transaction-list"></div>
+        </section> <!-- Reports -->
+        <section id="page-reports" class="page">
+            <h2 class="page-title">Laporan</h2>
+            <p>Coming soon...</p>
+        </section> <!-- Discounts page (fallback) -->
+        <section id="page-discounts" class="page">
+            <h2 class="page-title">Diskon</h2>
+            <div class="discount-tabs">
+                <button class="disc-tab active" data-target="disc-active">Promo Aktif</button>
+                <button class="disc-tab" data-target="disc-products">Produk Diskon</button>
+                <button class="disc-tab" data-target="disc-settings">Setting Diskon</button>
+            </div>
+            <div id="disc-active" class="disc-content active">
+                <div id="promo-list"></div>
+            </div>
+            <div id="disc-products" class="disc-content">
+                <div id="promo-products"></div>
+            </div>
+            <div id="disc-settings" class="disc-content">
+                <div id="promo-settings"></div>
+            </div>
+        </section>
+    </main> <!-- Cart Sidebar (hidden by default) -->
+    <aside id="cart-sidebar" aria-hidden="true">
+        <h3>Cart</h3>
+        <div id="cart-items">
+            <p>Belum ada item</p>
+        </div>
+        <div id="cart-summary">
+            <p>Subtotal: Rp <span id="subtotal">0</span></p>
+            <p>Diskon: Rp <span id="discount">0</span></p>
+            <p><strong>Total: Rp <span id="total">0</span></strong></p>
+        </div> <button id="btn-checkout">Checkout</button>
+    </aside> <!-- Floating Cart Button (FAB) --> <button id="fab-cart" aria-label="Open cart">🛒</button>
+    <footer>
+        <p>&copy; 2025 Pena POS</p>
+    </footer>
+    <script src="pos/js/app.js"></script>
+</body>
+
+</html>
