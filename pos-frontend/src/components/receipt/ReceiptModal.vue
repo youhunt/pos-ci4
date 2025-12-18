@@ -17,7 +17,7 @@
         class="flex justify-between text-sm mb-1"
       >
         <span>{{ item.qty }} x {{ item.name }}</span>
-        <span>Rp {{ item.subtotal.toLocaleString() }}</span>
+        <span>Rp {{ Number(item.price).toLocaleString('id-ID') }}</span>
       </div>
 
       <hr class="my-2" />
@@ -26,17 +26,17 @@
       <div class="text-sm">
         <div class="flex justify-between">
           <span>Subtotal</span>
-          <span>Rp {{ receipt.transaction.total_amount.toLocaleString() }}</span>
+          <span>Rp {{ receipt.transaction.total_amount.toLocaleString('id-ID') }}</span>
         </div>
 
         <div class="flex justify-between">
           <span>Diskon</span>
-          <span>Rp {{ receipt.transaction.discount_amount.toLocaleString() }}</span>
+          <span>Rp {{ receipt.transaction.discount_amount.toLocaleString('id-ID') }}</span>
         </div>
 
         <div class="flex justify-between font-bold text-lg mt-2">
           <span>Total</span>
-          <span>Rp {{ receipt.transaction.total_amount.toLocaleString() }}</span>
+          <span>Rp {{ receipt.transaction.total_amount.toLocaleString('id-ID') }}</span>
         </div>
       </div>
 
@@ -46,7 +46,7 @@
       <div class="text-sm">
         <div class="flex justify-between">
           <span>Dibayar</span>
-          <span>Rp {{ receipt.transaction.total_paid.toLocaleString() }}</span>
+          <span>Rp {{ receipt.transaction.total_paid.toLocaleString('id-ID') }}</span>
         </div>
 
         <div class="flex justify-between">

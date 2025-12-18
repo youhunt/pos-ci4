@@ -8,7 +8,7 @@
       <div class="mb-3">
         <div class="text-gray-600">Total Belanja</div>
         <div class="text-2xl font-bold text-green-600">
-          Rp {{ total.toLocaleString() }}
+          Rp {{ total.toLocaleString('id-ID') }}
         </div>
       </div>
 
@@ -28,7 +28,7 @@
           class="text-xl font-bold"
           :class="change < 0 ? 'text-red-500' : 'text-blue-600'"
         >
-          Rp {{ change.toLocaleString() }}
+          Rp {{ change.toLocaleString('id-ID') }}
         </div>
       </div>
 

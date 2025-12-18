@@ -36,7 +36,7 @@
           </div>
         </td>
 
-        <td class="p-2">Rp {{ (item.qty * item.price).toLocaleString() }}</td>
+        <td class="p-2">Rp {{ (item.qty * item.price).toLocaleString('id-ID') }}</td>
 
         <td class="p-2 text-right">
           <button

@@ -158,4 +158,19 @@ class ProductsController extends BaseController
         return redirect()->to('/products')->with('success','Import produk selesai');
     }
 
+    public function sync()
+    {
+        $shopId = (int)$this->request->getGet('shop_id');
+        $since  = $this->request->getGet('since');
+
+        if (!$shopId) {
+            return $this->response->setStatusCode(400)
+                ->setJSON(['message' => 'shop_id wajib']);
+        }
+
+        return $this->response->setJSON(
+            $this->service->sync($shopId, $since)
+        );
+    }
+
 }

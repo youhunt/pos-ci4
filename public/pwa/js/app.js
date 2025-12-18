@@ -83,7 +83,7 @@ async function loadProductsUI() {
 
         if (p.discount_type === "amount") {
             finalPrice = p.price - p.discount_value;
-            discountLabel = `-Rp${Number(p.discount_value).toLocaleString()}`;
+            discountLabel = `-Rp${Number(p.discount_value).toLocaleString('id-ID')}`;
         }
 
         if (finalPrice < 0) finalPrice = 0;
@@ -101,8 +101,8 @@ async function loadProductsUI() {
             <h3>${p.name}</h3>
 
             <p class="price">
-                ${discountLabel ? `<span class="old-price">Rp ${Number(p.price).toLocaleString()}</span>` : ""}
-                <span class="final-price">Rp ${Number(finalPrice).toLocaleString()}</span>
+                ${discountLabel ? `<span class="old-price">Rp ${Number(p.price).toLocaleString('id-ID')}</span>` : ""}
+                <span class="final-price">Rp ${Number(finalPrice).toLocaleString('id-ID')}</span>
             </p>
 
             <p>Stok: ${stock}</p>
@@ -163,14 +163,14 @@ function renderCart() {
         row.className = "cart-item";
         row.innerHTML = `
             <span>${item.name} x${item.qty}</span>
-            <span>Rp ${(item.qty * item.price).toLocaleString()}</span>
+            <span>Rp ${(item.qty * item.price).toLocaleString('id-ID')}</span>
         `;
         el.appendChild(row);
     });
 
-    subtotalEl.textContent = subtotal.toLocaleString();
+    subtotalEl.textContent = subtotal.toLocaleString('id-ID');
     discountEl.textContent = "0";
-    totalEl.textContent = subtotal.toLocaleString();
+    totalEl.textContent = subtotal.toLocaleString('id-ID');
 }
 
 /** ===================================================================
@@ -263,7 +263,7 @@ async function renderPendingTransactions() {
           <div class="date">${t.created_at || '-'}</div>
         </div>
         <div class="right">
-          <div class="amount">Rp ${Number(t.total_amount).toLocaleString()}</div>
+          <div class="amount">Rp ${Number(t.total_amount).toLocaleString('id-ID')}</div>
         </div>
       `;
       list.appendChild(row);
@@ -292,7 +292,7 @@ async function loadTransactionsUI() {
         div.className = "transaction-card";
         div.innerHTML = `
             <h4>${t.invoice ?? t.local_id}</h4>
-            <p>Total: Rp ${Number(t.total_amount).toLocaleString()}</p>
+            <p>Total: Rp ${Number(t.total_amount).toLocaleString('id-ID')}</p>
             <p>Status: ${t.synced_at ? "Synced" : "Pending"}</p>
             <p>Tanggal: ${t.created_at}</p>
         `;

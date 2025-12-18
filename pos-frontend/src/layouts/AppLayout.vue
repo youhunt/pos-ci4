@@ -5,16 +5,16 @@
       <div class="font-bold text-xl mb-6">POS Admin</div>
 
       <nav class="space-y-2">
-        <router-link to="/" class="block p-2 rounded hover:bg-gray-200">
+        <router-link to="/admin/dashboard" class="block p-2 rounded hover:bg-gray-200">
           Dashboard
         </router-link>
-        <router-link to="/products" class="block p-2 rounded hover:bg-gray-200">
+        <router-link to="/admin/products" class="block p-2 rounded hover:bg-gray-200">
           Products
         </router-link>
-        <router-link to="/reports" class="block p-2 rounded hover:bg-gray-200">
+        <router-link to="/admin/reports" class="block p-2 rounded hover:bg-gray-200">
           Reports
         </router-link>
-        <router-link to="/settings" class="block p-2 rounded hover:bg-gray-200">
+        <router-link to="/admin/settings" class="block p-2 rounded hover:bg-gray-200">
           Settings
         </router-link>
       </nav>

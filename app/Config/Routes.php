@@ -39,8 +39,27 @@ $routes->group('api', ['filter' => 'cors', 'namespace' => 'App\Controllers\Api']
     $routes->options('promo/products', fn() => service('response'));
     $routes->get('promo/active', 'PromoController::active');
     $routes->get('promo/products', 'PromoController::products');
+
+    $routes->options('dashboard/summary', fn() => service('response'));
+    $routes->get('dashboard/summary', 'DashboardController::summary');
+
 });
 
+$routes->group('api/sync', [
+    'filter'    => 'cors',
+    'namespace' => 'App\Controllers\Api\Sync'
+], function ($routes) {
+
+    // PREFLIGHT
+    $routes->options('products', fn () => service('response'));
+    $routes->options('categories', fn () => service('response'));
+
+    // PRODUCT SYNC
+    $routes->get('products', 'ProductSyncController::pull');
+
+    // CATEGORY SYNC
+    $routes->get('categories', 'CategorySyncController::pull');
+});
 
 
 // -----------------------------------------------------
@@ -129,4 +148,10 @@ $routes->group('promo', ['filter' => 'login'], function ($routes) {
     $routes->get('edit/(:num)', 'Api\PromoController::edit/$1');
     $routes->post('update/(:num)', 'Api\PromoController::update/$1');
     $routes->get('delete/(:num)', 'Api\PromoController::delete/$1');
+});
+
+$routes->group('api/admin', ['filter' => 'cors'], function ($routes) {
+    $routes->get('products', 'Api\Admin\ProductController::index');
+    $routes->post('products', 'Api\Admin\ProductController::store');
+    $routes->put('products/(:num)', 'Api\Admin\ProductController::update/$1');
 });

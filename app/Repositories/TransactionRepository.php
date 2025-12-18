@@ -55,10 +55,9 @@ class TransactionRepository
 
     public function getItems(int $trxId): array
     {
-        return $this->item
-            ->where('transaction_id', $trxId)
-            ->findAll();
+        return $this->item->getItemsWithProduct($trxId);
     }
+
 }
 
 

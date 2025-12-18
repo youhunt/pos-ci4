@@ -6,7 +6,7 @@
     >
       <div class="font-semibold">POS Mode</div>
 
-      <router-link to="/" class="bg-white text-blue-600 px-3 py-1 rounded">
+      <router-link to="/admin/dashboard" class="bg-white text-blue-600 px-3 py-1 rounded">
         ⬅ Keluar POS
       </router-link>
     </div>
