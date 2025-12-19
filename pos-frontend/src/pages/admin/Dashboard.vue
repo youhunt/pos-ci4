@@ -12,7 +12,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="grid grid-cols-4 gap-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
     <div class="bg-white p-4 rounded shadow">
       <div class="text-sm text-gray-500">Penjualan Hari Ini</div>
       <div class="text-xl font-bold">

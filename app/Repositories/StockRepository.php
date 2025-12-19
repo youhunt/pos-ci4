@@ -52,4 +52,63 @@ class StockRepository
             ->where('product_id', $productId)
             ->decrement('qty', $qty);
     }
+
+    /**
+     * Ambil stok REAL dari ledger
+     */
+    public function getAvailableStock(int $shopId, int $productId): int
+    {
+        $in = $this->stock
+            ->selectSum('qty')
+            ->where([
+                'shop_id' => $shopId,
+                'product_id' => $productId,
+                'type' => 'in'
+            ])
+            ->first()['qty'] ?? 0;
+
+        $out = $this->stock
+            ->selectSum('qty')
+            ->where([
+                'shop_id' => $shopId,
+                'product_id' => $productId,
+                'type' => 'out'
+            ])
+            ->first()['qty'] ?? 0;
+
+        return (int)$in - (int)$out;
+    }
+
+    /**
+     * Catat mutasi stok (OUT)
+     */
+    public function recordOut(
+        int $shopId,
+        int $productId,
+        int $qty,
+        string $note
+    ): void {
+        $this->stock->insert([
+            'shop_id'    => $shopId,
+            'product_id' => $productId,
+            'type'       => 'out',
+            'qty'        => $qty,
+            'note'       => $note,
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
+    }
+
+    /**
+     * (Opsional) Update snapshot di products.stock
+     */
+    public function syncProductStock(int $shopId, int $productId): void
+    {
+        $stock = $this->getAvailableStock($shopId, $productId);
+
+        $this->product
+            ->where('shop_id', $shopId)
+            ->where('id', $productId)
+            ->set('stock', $stock)
+            ->update();
+    }
 }

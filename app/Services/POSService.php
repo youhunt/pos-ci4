@@ -41,30 +41,48 @@ class POSService
                 throw new \RuntimeException('Cart kosong.');
             }
 
-            // Hitung total (backend authoritative)
             $subtotal = 0;
+            $products = [];
+
+            // =========================
+            // 1. VALIDASI STOK (LEDGER)
+            // =========================
             foreach ($items as $i) {
-                $product = $this->stockRepo->getProductWithStock($shopId, $i['product_id']);
+                $product = $this->productRepo->findById($i['product_id']);
 
                 if (!$product) {
                     throw new \RuntimeException('Produk tidak ditemukan.');
                 }
 
-                if ($product['stock'] < $i['qty']) {
-                    throw new \RuntimeException("Stok tidak cukup untuk {$product['name']}.");
+                if ((int)$product['is_active'] !== 1) {
+                    throw new \RuntimeException(
+                        "Produk {$product['name']} sudah tidak aktif."
+                    );
                 }
 
+                $available = $this->stockRepo
+                    ->getAvailableStock($shopId, $i['product_id']);
+
+                if ($available < $i['qty']) {
+                    throw new \RuntimeException(
+                        "Stok tidak cukup untuk {$product['name']}."
+                    );
+                }
+
+                $products[$i['product_id']] = $product;
                 $subtotal += $product['price'] * $i['qty'];
             }
 
-            $discount = 0; // nanti promo
+            $discount = 0;
             $grand    = $subtotal - $discount;
-            $invoice = 'TRX-' . date('YmdHis') . '-' . random_int(100, 999);
-            $paid   = (int)($payload['paid'] ?? $grand);
-            $change = max(0, $paid - $grand);
 
-            // Simpan header transaksi
-            
+            $invoice = 'TRX-' . date('YmdHis') . '-' . random_int(100, 999);
+            $paid    = (int)($payload['paid'] ?? $grand);
+            $change  = max(0, $paid - $grand);
+
+            // =========================
+            // 2. SIMPAN TRANSAKSI
+            // =========================
             $trxId = $this->transactionRepo->createTransaction([
                 'shop_id'         => $shopId,
                 'invoice'         => $invoice,
@@ -77,9 +95,11 @@ class POSService
                 'created_at'      => date('Y-m-d H:i:s'),
             ]);
 
-            // Simpan item + update stok
+            // =========================
+            // 3. ITEM + MUTASI STOK
+            // =========================
             foreach ($items as $i) {
-                $product = $this->stockRepo->getProductWithStock($shopId, $i['product_id']);
+                $product = $products[$i['product_id']];
 
                 $this->transactionRepo->addItem($trxId, [
                     'product_id' => $i['product_id'],
@@ -88,18 +108,27 @@ class POSService
                     'line_total' => $product['price'] * $i['qty'],
                 ]);
 
-                $this->stockRepo->decreaseStock(
+                // ⬅️ INI KUNCI: INSERT LEDGER
+                $this->stockRepo->recordOut(
                     $shopId,
                     $i['product_id'],
-                    $i['qty']
+                    $i['qty'],
+                    'POS Transaction #' . $invoice
+                );
+
+                // ⬅️ optional tapi recommended
+                $this->stockRepo->syncProductStock(
+                    $shopId,
+                    $i['product_id']
                 );
             }
 
-            $method = $payload['payment_method'] ?? 'cash';
-
+            // =========================
+            // 4. PAYMENT
+            // =========================
             $this->paymentRepo->addPayment(
                 $trxId,
-                $method,
+                $payload['payment_method'] ?? 'cash',
                 $paid,
                 'Auto generated'
             );
@@ -114,7 +143,6 @@ class POSService
                 'grand_total'    => $grand,
                 'paid'           => $paid,
                 'change'         => $change,
-                'items'          => $items,
             ];
         } catch (\Throwable $e) {
             $db->transRollback();

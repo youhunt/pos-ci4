@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\ProductModel;
 
-class ProductRepository
+class ProductRepository extends SyncRepository
 {
     protected $product;
 
@@ -22,14 +22,18 @@ class ProductRepository
     {
         return $this->product
             ->where('barcode', $barcode)
+            ->where('is_active', 1)
             ->first();
     }
 
     public function search($keyword)
     {
         return $this->product
-            ->like('name', $keyword)
-            ->orLike('barcode', $keyword)
+            ->where('is_active', 1)
+            ->groupStart()
+                ->like('name', $keyword)
+                ->orLike('barcode', $keyword)
+            ->groupEnd()
             ->limit(20)
             ->find();
     }
@@ -38,36 +42,37 @@ class ProductRepository
     {
         return $this->product
             ->where('shop_id', $shopId)
+            ->where('is_active', 1)
             ->where('is_promo_eligible', 1)
             ->findAll();
     }
 
-    // 🆕 KHUSUS POS SYNC
-    public function getForSync(int $shopId, ?string $since = null): array
-    {
-        $db = \Config\Database::connect();
+    // 🔑 INCREMENTAL SYNC (HANYA PRODUK AKTIF)
+    public function getForSync(
+        int $shopId,
+        ?string $since = null,
+        int $limit = 500
+    ): array {
+        $builder = $this->product->builder();
 
-        $builder = $db->table('products p')
-            ->select("
-                p.id,
-                p.shop_id,
-                p.sku,
-                p.barcode,
-                p.name,
-                p.price,
-                p.updated_at,
-                IFNULL(s.stock, 0) AS stock
-            ")
-            ->join(
-                'stocks s',
-                's.product_id = p.id AND s.shop_id = p.shop_id',
-                'left'
-            )
-            ->where('p.shop_id', $shopId);
+        $builder
+            ->select([
+                'id',
+                'shop_id',
+                'sku',
+                'name',
+                'barcode',
+                'price',
+                'stock',
+                'is_active',
+                'updated_at'
+            ])
+            ->where('shop_id', $shopId)
+            ->where('is_active', 1)
+            ->orderBy('updated_at', 'asc');
 
-        if ($since) {
-            $builder->where('p.updated_at >', $since);
-        }
+        $this->applySince($builder, $since);
+        $this->applyLimit($builder, $limit);
 
         return $builder->get()->getResultArray();
     }
