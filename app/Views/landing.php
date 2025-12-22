@@ -23,7 +23,7 @@
                 <a href="#pricing" class="hover:text-indigo-600">Harga</a>
                 <a href="#testimonials" class="hover:text-indigo-600">Testimoni</a>
                 <?php if ($auth->check()): ?>
-                    <a class="navbar-brand" href="<?= base_url('/dashboard');?>">Dashboard</a>
+                    <a class="navbar-brand" href="<?= base_url('admin/dashboard');?>">Dashboard</a>
                     <span class="navbar-text me-3">
                         <?= esc($auth->user()->username) ?>
                     </span>

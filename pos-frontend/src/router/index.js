@@ -17,15 +17,14 @@ const routes = [
   },
 
   {
-    path: "/admin",
+    path: '/admin',
     component: AppLayout,
     children: [
-      { path: "", redirect: "dashboard" }, // ⬅️ INI
-      { path: "dashboard", component: Dashboard },
-      { path: "products", component: Products },
-      { path: "reports", component: Reports },
-      { path: "settings", component: Settings },
-    ],
+      { path: 'dashboard', component: Dashboard },
+      { path: 'products', component: Products },
+      { path: 'reports', component: Reports },
+      { path: 'settings', component: Settings },
+    ]
   },
 
   {

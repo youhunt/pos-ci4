@@ -1,42 +1,54 @@
 <template>
-  <div class="flex w-full h-full text-lg">
-    <!-- LEFT PANEL: Produk -->
-    <div class="w-3/12 bg-white border-r p-4 overflow-y-auto">
-      <SearchBar v-model="ui.searchQuery" />
+  <div class="hidden md:flex w-full h-full">
+    <!-- SELURUH POS -->
+    <div class="flex w-full h-full text-lg">
+      <!-- LEFT PANEL: Produk -->
+      <div class="w-3/12 bg-white border-r p-4 overflow-y-auto">
+        <SearchBar v-model="ui.searchQuery" />
 
-      <ProductGrid :products="filteredProducts" @select="addToCart" />
-    </div>
+        <ProductGrid :products="filteredProducts" @select="addToCart" />
+      </div>
 
-    <!-- MIDDLE PANEL: Cart -->
-    <div class="w-6/12 bg-gray-50 p-4 overflow-y-auto">
-      <CartTable />
-    </div>
+      <!-- MIDDLE PANEL: Cart -->
+      <div class="w-6/12 bg-gray-50 p-4 overflow-y-auto">
+        <CartTable />
+      </div>
 
-    <!-- RIGHT PANEL: Totals -->
-    <div class="w-3/12 bg-white border-l p-4">
-      <TotalsPanel
-        :totals="{
-          subtotal: cart.subtotal,
-          discount: cart.discount,
-          total: cart.total
-        }"
-        :is-empty="cart.isEmpty"
-        @checkout="openPayment"
-        />
+      <!-- RIGHT PANEL: Totals -->
+      <div class="w-3/12 bg-white border-l p-4">
+        <TotalsPanel
+          :totals="{
+            subtotal: cart.subtotal,
+            discount: cart.discount,
+            total: cart.total
+          }"
+          :is-empty="cart.isEmpty"
+          @checkout="openPayment"
+          />
+      </div>
     </div>
+  <PaymentModal
+    v-if="showPayment"
+    :total="cart.total"
+    @confirm="onConfirmPayment"
+    @close="showPayment = false"
+  />
+  <ReceiptModal
+    v-if="showReceipt"
+    :receipt="receipt"
+    @close="showReceipt = false"
+  />
+
+</div>
+
+<div class="md:hidden h-screen flex items-center justify-center bg-gray-100">
+  <div class="text-center p-6">
+    <h2 class="text-xl font-bold mb-2">POS Tidak Tersedia</h2>
+    <p class="text-gray-600">
+      Gunakan tablet atau desktop untuk mengakses POS.
+    </p>
   </div>
-<PaymentModal
-  v-if="showPayment"
-  :total="cart.total"
-  @confirm="onConfirmPayment"
-  @close="showPayment = false"
-/>
-<ReceiptModal
-  v-if="showReceipt"
-  :receipt="receipt"
-  @close="showReceipt = false"
-/>
-
+</div>
 </template>
 
 <script setup>

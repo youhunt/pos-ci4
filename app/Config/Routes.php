@@ -1,5 +1,6 @@
 <?php
 
+use App\Database\Seeds\UserSeeder;
 use CodeIgniter\Router\RouteCollection;
 
 /**
@@ -10,6 +11,31 @@ use CodeIgniter\Router\RouteCollection;
 // PUBLIC ROUTES
 // -----------------------------------------------------
 $routes->get('/', 'Web\DashboardController::index');
+
+$routes->group('admin', [
+    'namespace' => 'App\Controllers\Web\Admin',
+    'filter'    => 'login'
+], function ($routes) {
+    $routes->get('/', 'DashboardController::index');
+    $routes->get('dashboard', 'DashboardController::index');
+    $routes->get('products', 'ProductsController::index');
+    $routes->get('promos', 'PromoController::index');
+    $routes->get('users', 'UserController::index');
+
+    $routes->get('promos', 'PromoController::index');
+    $routes->get('promos/create', 'PromoController::create');
+    $routes->post('promos/store', 'PromoController::store');
+    $routes->get('promos/(:num)/edit', 'PromoController::edit/$1');
+    $routes->post('promos/(:num)/update', 'PromoController::update/$1');
+    $routes->get('promos/(:num)/delete', 'PromoController::delete/$1');
+
+    $routes->get('users', 'UserController::index');
+    $routes->get('users/create', 'UserController::create');
+    $routes->post('users/save', 'UserController::save');
+    $routes->get('users/edit/(:num)', 'UserController::edit/$1');
+    $routes->post('users/update/(:num)', 'UserController::update/$1');
+    $routes->get('users/delete/(:num)', 'UserController::delete/$1');
+});
 
 // Halaman register user baru (Web)
 $routes->get('register', 'Api\UserController::registerForm');

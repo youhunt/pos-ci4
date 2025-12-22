@@ -3,8 +3,11 @@
 
 <h4><?= isset($promo) ? 'Edit Promo' : 'Tambah Promo' ?></h4>
 
-<form action="<?= isset($promo) ? site_url('promo/update/'.$promo['id']) : site_url('promo/store') ?>" method="post">
-
+<form method="post"
+      action="<?= isset($promo)
+          ? '/admin/promos/' . $promo['id'] . '/update'
+          : '/admin/promos/store' ?>">
+          
     <div class="mb-3">
         <label>Nama Promo</label>
         <input type="text" name="name" class="form-control"
