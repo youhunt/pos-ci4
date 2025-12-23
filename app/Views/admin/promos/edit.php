@@ -5,7 +5,7 @@
 
 <form method="post"
       action="<?= isset($promo)
-          ? '/admin/promos/' . $promo['id'] . '/update'
+          ? '/admin/promos/update/' . $promo['id'] 
           : '/admin/promos/store' ?>">
           
     <div class="mb-3">

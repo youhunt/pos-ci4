@@ -4,7 +4,7 @@
 <div class="d-flex justify-content-between mb-3">
     <h4>Daftar Promo</h4>
 
-    <a href="<?= site_url('promos/create') ?>" class="btn btn-primary">
+    <a href="<?= site_url('admin/promos/create') ?>" class="btn btn-primary">
         <i class="fas fa-plus"></i> Tambah Promo
     </a>
 </div>
@@ -92,11 +92,11 @@
                             </td>
 
                             <td>
-                                <a href="<?= site_url('promo/edit/'.$p['id']) ?>" class="btn btn-sm btn-warning">
+                                <a href="<?= site_url('admin/promos/edit/'.$p['id']) ?>" class="btn btn-sm btn-warning">
                                     <i class="bi bi-pencil"></i>
                                 </a>
 
-                                <a href="<?= site_url('promo/delete/'.$p['id']) ?>"
+                                <a href="<?= site_url('admin/promos/delete/'.$p['id']) ?>"
                                    onclick="return confirm('Hapus promo ini?')"
                                    class="btn btn-sm btn-danger">
                                    <i class="bi bi-trash"></i>

@@ -41,7 +41,7 @@ class PromoController extends BaseController
     {
         $shopId = user()->shop_id;
 
-        return view('admin/promos/form', [
+        return view('admin/promos/edit', [
             'products'   => $this->productModel->where('shop_id', $shopId)->orderBy('name')->findAll(),
             'categories' => $this->categoryModel->where('shop_id', $shopId)->orderBy('name')->findAll(),
         ]);
@@ -94,7 +94,7 @@ class PromoController extends BaseController
             return redirect()->back()->with('error', 'Promo tidak ditemukan');
         }
 
-        return view('admin/promos/form', [
+        return view('admin/promos/edit', [
             'promo'         => $promo,
             'products'      => $this->productModel->where('shop_id', $shopId)->orderBy('name')->findAll(),
             'categories'    => $this->categoryModel->where('shop_id', $shopId)->orderBy('name')->findAll(),

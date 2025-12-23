@@ -8,13 +8,24 @@
         <th class="p-2"></th>
       </tr>
     </thead>
+
     <tbody>
       <tr
-        v-for="(item, index) in cart.items"
+        v-for="item in cart.items"
         :key="item.product_id"
         class="border-b"
       >
-        <td class="p-2">{{ item.product.name }}</td>
+        <td class="p-2">
+          {{ item.product.name }}
+
+          <!-- INFO PROMO -->
+          <div
+            v-if="getPromo(item)"
+            class="text-xs text-red-600"
+          >
+            Promo -{{ getPromo(item).discount_value }}%
+          </div>
+        </td>
 
         <td class="p-2">
           <div class="flex items-center space-x-2">
@@ -36,7 +47,17 @@
           </div>
         </td>
 
-        <td class="p-2">Rp {{ (item.qty * item.price).toLocaleString('id-ID') }}</td>
+        <td class="p-2">
+          Rp {{ (item.qty * item.price).toLocaleString('id-ID') }}
+
+          <!-- DISKON (ESTIMASI) -->
+          <div
+            v-if="getDiscount(item) > 0"
+            class="text-xs text-red-600"
+          >
+            -Rp {{ getDiscount(item).toLocaleString('id-ID') }}
+          </div>
+        </td>
 
         <td class="p-2 text-right">
           <button
@@ -52,6 +73,24 @@
 </template>
 
 <script setup>
-import { useCartStore } from "../../stores/cart";
-const cart = useCartStore();
+import { useCartStore } from '../../stores/cart'
+import { usePromoStore } from '../../stores/promo'
+
+const cart = useCartStore()
+const promoStore = usePromoStore()
+
+function getPromo(item) {
+  return promoStore.getPromoForProduct(item.product_id)
+}
+
+function getDiscount(item) {
+  const promo = getPromo(item)
+  if (!promo) return 0
+
+  if (promo.discount_type === 'percent') {
+    return item.price * item.qty * (promo.discount_value / 100)
+  }
+
+  return 0
+}
 </script>

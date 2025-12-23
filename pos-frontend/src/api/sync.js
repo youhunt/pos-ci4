@@ -78,3 +78,32 @@ export async function syncCategories(shopId) {
   await tx.done;
 }
 
+export async function syncPromos(shopId) {
+
+  const res = await api.get('/promos/active', {
+    params: {
+      shop_id: shopId
+    }
+  });
+
+  const promos = res.data?.data || res.data || []
+
+  const db = await posDB
+  const tx = db.transaction('promos', 'readwrite')
+  const store = tx.objectStore('promos')
+
+  for (const promo of promos) {
+    // PASTIKAN NUMBER
+    promo.id = Number(promo.id)
+    promo.product_id = promo.product_id ? Number(promo.product_id) : null
+    promo.category_id = promo.category_id ? Number(promo.category_id) : null
+    promo.active = Number(promo.active)
+
+    await store.put(promo)
+  }
+
+  await tx.done
+
+  console.log('PROMOS SYNCED:', promos.length)
+}
+

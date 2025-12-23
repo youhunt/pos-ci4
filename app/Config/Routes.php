@@ -25,9 +25,9 @@ $routes->group('admin', [
     $routes->get('promos', 'PromoController::index');
     $routes->get('promos/create', 'PromoController::create');
     $routes->post('promos/store', 'PromoController::store');
-    $routes->get('promos/(:num)/edit', 'PromoController::edit/$1');
-    $routes->post('promos/(:num)/update', 'PromoController::update/$1');
-    $routes->get('promos/(:num)/delete', 'PromoController::delete/$1');
+    $routes->get('promos/edit/(:num)', 'PromoController::edit/$1');
+    $routes->post('promos/update/(:num)', 'PromoController::update/$1');
+    $routes->get('promos/delete/(:num)', 'PromoController::delete/$1');
 
     $routes->get('users', 'UserController::index');
     $routes->get('users/create', 'UserController::create');
@@ -61,10 +61,10 @@ $routes->group('api', ['filter' => 'cors', 'namespace' => 'App\Controllers\Api']
     $routes->get('sync/pull', 'SyncController::pull');
 
     // ===== PROMO API =====
-    $routes->options('promo/active', fn() => service('response'));
-    $routes->options('promo/products', fn() => service('response'));
-    $routes->get('promo/active', 'PromoController::active');
-    $routes->get('promo/products', 'PromoController::products');
+    $routes->options('promos/active', fn() => service('response'));
+    $routes->options('promos/products', fn() => service('response'));
+    $routes->get('promos/active', 'PromoController::getActive');
+    $routes->get('promos/products', 'PromoController::getDiscountedProducts');
 
     $routes->options('dashboard/summary', fn() => service('response'));
     $routes->get('dashboard/summary', 'DashboardController::summary');
@@ -167,14 +167,14 @@ $routes->group('reports', ['filter' => 'login'], function ($routes) {
 // -----------------------------------------------------
 // PROMO (WEB UI)
 // -----------------------------------------------------
-$routes->group('promo', ['filter' => 'login'], function ($routes) {
-    $routes->get('/', 'Api\PromoController::index');
-    $routes->get('create', 'Api\PromoController::create');
-    $routes->post('store', 'Api\PromoController::store');
-    $routes->get('edit/(:num)', 'Api\PromoController::edit/$1');
-    $routes->post('update/(:num)', 'Api\PromoController::update/$1');
-    $routes->get('delete/(:num)', 'Api\PromoController::delete/$1');
-});
+// $routes->group('promo', ['filter' => 'login'], function ($routes) {
+//     $routes->get('/', 'Api\PromoController::index');
+//     $routes->get('create', 'Api\PromoController::create');
+//     $routes->post('store', 'Api\PromoController::store');
+//     $routes->get('edit/(:num)', 'Api\PromoController::edit/$1');
+//     $routes->post('update/(:num)', 'Api\PromoController::update/$1');
+//     $routes->get('delete/(:num)', 'Api\PromoController::delete/$1');
+// });
 
 $routes->group('api/admin', ['filter' => 'cors'], function ($routes) {
     $routes->get('products', 'Api\Admin\ProductController::index');

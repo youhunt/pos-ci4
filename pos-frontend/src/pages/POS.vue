@@ -62,6 +62,8 @@ import { fetchReceipt } from "../api/pos";
 import { syncProducts, syncCategories } from '../api/sync';
 import { useProductStore } from '../stores/productStore';
 import { useCategoryStore } from '../stores/categoryStore';
+import { syncPromos } from '../api/sync'
+import { usePromoStore } from '../stores/promo'
 
 import SearchBar from "../components/pos/SearchBar.vue";
 import ProductGrid from "../components/pos/ProductGrid.vue";
@@ -78,6 +80,7 @@ const receipt = ref(null);
 const showReceipt = ref(false);
 //const productStore = useProductStore();
 const categoryStore = useCategoryStore();
+const promoStore = usePromoStore()
 
 onMounted(async () => {
   const shopId = 1;
@@ -85,6 +88,10 @@ onMounted(async () => {
   // 1. Sync dari server
   await syncCategories(shopId);
   await syncProducts(shopId);
+  await syncPromos(shopId)
+  await promoStore.loadFromLocal()
+
+  console.log('PROMOS READY:', promoStore.items)
 
   // 2. Load dari local DB
   await categoryStore.loadFromLocal();
@@ -94,7 +101,6 @@ onMounted(async () => {
   document.addEventListener("keyup", onKeyup);
   document.addEventListener("paste", onPaste);
 
-  console.log("Barcode listener mounted");
 });
 
 onBeforeUnmount(() => {
@@ -159,7 +165,6 @@ function onKeydown(e) {
 
     const code = barcodeBuffer.value.trim();
     barcodeBuffer.value = "";
-    console.log("BARCODE ENTER:", code); 
 
     if (code) {
       handleBarcode(code);
@@ -179,7 +184,6 @@ function onKeydown(e) {
 }
 
 function onKeyup(e) {
-  console.log("KEYUP DETECTED:", e.key);
   const tag = document.activeElement?.tagName;
   const isInput = tag === "INPUT" || tag === "TEXTAREA";
 
@@ -189,8 +193,6 @@ function onKeyup(e) {
 
     const code = barcodeBuffer.value.trim();
     barcodeBuffer.value = "";
-
-    console.log("BARCODE ENTER:", code); // ⬅️ DEBUG
 
     if (code.length >= 8) {
       handleBarcode(code);
@@ -223,10 +225,8 @@ function onPaste(e) {
 }
 
 async function handleBarcode(barcode) {
-  console.log("HANDLE BARCODE:", barcode);
 
   const product = await products.findByBarcode(barcode);
-  console.log("FOUND PRODUCT:", product);
 
   if (!product) {
     alert("Produk tidak ditemukan");
