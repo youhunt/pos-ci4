@@ -63,7 +63,7 @@ export const useCartStore = defineStore("cart", {
       }
 
       const payload = {
-        shop_id: 1,
+        shop_id: 2,
         paid: payment.paid,
         change: payment.change,
         payment_method: "cash",

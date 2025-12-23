@@ -20,35 +20,34 @@
           :totals="{
             subtotal: cart.subtotal,
             discount: cart.discount,
-            total: cart.total
+            total: cart.total,
           }"
           :is-empty="cart.isEmpty"
           @checkout="openPayment"
-          />
+        />
       </div>
     </div>
-  <PaymentModal
-    v-if="showPayment"
-    :total="cart.total"
-    @confirm="onConfirmPayment"
-    @close="showPayment = false"
-  />
-  <ReceiptModal
-    v-if="showReceipt"
-    :receipt="receipt"
-    @close="showReceipt = false"
-  />
-
-</div>
-
-<div class="md:hidden h-screen flex items-center justify-center bg-gray-100">
-  <div class="text-center p-6">
-    <h2 class="text-xl font-bold mb-2">POS Tidak Tersedia</h2>
-    <p class="text-gray-600">
-      Gunakan tablet atau desktop untuk mengakses POS.
-    </p>
+    <PaymentModal
+      v-if="showPayment"
+      :total="cart.total"
+      @confirm="onConfirmPayment"
+      @close="showPayment = false"
+    />
+    <ReceiptModal
+      v-if="showReceipt"
+      :receipt="receipt"
+      @close="showReceipt = false"
+    />
   </div>
-</div>
+
+  <div class="md:hidden h-screen flex items-center justify-center bg-gray-100">
+    <div class="text-center p-6">
+      <h2 class="text-xl font-bold mb-2">POS Tidak Tersedia</h2>
+      <p class="text-gray-600">
+        Gunakan tablet atau desktop untuk mengakses POS.
+      </p>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -59,11 +58,11 @@ import { useCartStore } from "../stores/cart";
 import { useUIStore } from "../stores/ui";
 import { ref } from "vue";
 import { fetchReceipt } from "../api/pos";
-import { syncProducts, syncCategories } from '../api/sync';
-import { useProductStore } from '../stores/productStore';
-import { useCategoryStore } from '../stores/categoryStore';
-import { syncPromos } from '../api/sync'
-import { usePromoStore } from '../stores/promo'
+import { syncProducts, syncCategories } from "../api/sync";
+import { useProductStore } from "../stores/productStore";
+import { useCategoryStore } from "../stores/categoryStore";
+import { syncPromos } from "../api/sync";
+import { usePromoStore } from "../stores/promo";
 
 import SearchBar from "../components/pos/SearchBar.vue";
 import ProductGrid from "../components/pos/ProductGrid.vue";
@@ -80,18 +79,18 @@ const receipt = ref(null);
 const showReceipt = ref(false);
 //const productStore = useProductStore();
 const categoryStore = useCategoryStore();
-const promoStore = usePromoStore()
+const promoStore = usePromoStore();
 
 onMounted(async () => {
-  const shopId = 1;
+  const shopId = 2;
 
   // 1. Sync dari server
   await syncCategories(shopId);
   await syncProducts(shopId);
-  await syncPromos(shopId)
-  await promoStore.loadFromLocal()
+  await syncPromos(shopId);
+  await promoStore.loadFromLocal();
 
-  console.log('PROMOS READY:', promoStore.items)
+  console.log("PROMOS READY:", promoStore.items);
 
   // 2. Load dari local DB
   await categoryStore.loadFromLocal();
@@ -100,7 +99,6 @@ onMounted(async () => {
   //window.addEventListener("keydown", onKeydown);
   document.addEventListener("keyup", onKeyup);
   document.addEventListener("paste", onPaste);
-
 });
 
 onBeforeUnmount(() => {
@@ -141,7 +139,6 @@ async function onConfirmPayment(payment) {
 
     cart.clear();
     showPayment.value = false;
-
   } catch (e) {
     console.error("CHECKOUT ERROR:", e);
     alert("Gagal bayar");
@@ -225,7 +222,6 @@ function onPaste(e) {
 }
 
 async function handleBarcode(barcode) {
-
   const product = await products.findByBarcode(barcode);
 
   if (!product) {
@@ -240,5 +236,4 @@ async function handleBarcode(barcode) {
 
   addToCart(product);
 }
-
 </script>
