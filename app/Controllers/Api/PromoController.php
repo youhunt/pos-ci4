@@ -7,6 +7,7 @@ use App\Models\PromoModel;
 use App\Models\PromoProductModel;
 use App\Models\ProductModel;
 use App\Models\CategoryModel;
+use App\Services\PromoService;
 use CodeIgniter\API\ResponseTrait;
 
 class PromoController extends BaseController
@@ -17,6 +18,7 @@ class PromoController extends BaseController
     protected $promoProductModel;
     protected $productModel;
     protected $categoryModel;
+    protected $promoService;
 
     public function __construct()
     {
@@ -24,6 +26,7 @@ class PromoController extends BaseController
         $this->promoProductModel = new PromoProductModel();
         $this->productModel      = new ProductModel();
         $this->categoryModel     = new CategoryModel();
+        $this->promoService      = new PromoService();
     }
 
     public function getActive()
@@ -34,27 +37,9 @@ class PromoController extends BaseController
             return $this->fail('shop_id required');
         }
 
-        $rawPromos = $this->promoModel->getAllActivePromosForPOS($shopId);
-
-        $promos = [];
-
-        foreach ($rawPromos as $p) {
-            if ($p['type'] === 'product') {
-                $products = $this->promoProductModel
-                    ->where('promo_id', $p['id'])
-                    ->findAll();
-
-                foreach ($products as $pp) {
-                    $row = $p;
-                    $row['product_id'] = $pp['product_id'];
-                    $promos[] = $row;
-                }
-            } else {
-                $promos[] = $p;
-            }
-        }
-
-        return $this->respond(['data' => $promos]);
+        return $this->respond(
+            $this->promoService->getActiveProductPromos($shopId)
+        );
 
     }
 

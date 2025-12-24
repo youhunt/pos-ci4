@@ -63,6 +63,33 @@ class PromoModel extends BaseModel
         return $result;
     }
 
+    public function getActivePromosForPOS(int $shopId): array
+    {
+        $now = date('Y-m-d H:i:s');
+        $weekday = date('N');
+
+        $builder = $this->db->table('promos p')
+            ->select('p.*')
+            ->where('p.shop_id', $shopId)
+            ->where('p.active', 1)
+
+            ->where("(p.start_date IS NULL OR p.start_date <= CURDATE())", null, false)
+            ->where("(p.end_date IS NULL OR p.end_date >= CURDATE())", null, false)
+
+            ->where("(p.weekdays IS NULL OR FIND_IN_SET({$weekday}, p.weekdays))", null, false)
+            ->where("(p.start_time IS NULL OR p.start_time <= CURTIME())", null, false)
+            ->where("(p.end_time IS NULL OR p.end_time >= CURTIME())", null, false)
+
+            ->orderBy('p.updated_at', 'ASC');
+
+        $result = $builder->get()->getResultArray();
+
+        // debug
+        log_message('debug', 'PROMO SQL: ' . $this->db->getLastQuery());
+        log_message('debug', 'PROMOS FOUND: ' . count($result));
+        return $result;
+    }
+
     public function getAllActivePromosForPOS(int $shopId): array
     {
         $now = date('Y-m-d H:i:s');
@@ -84,6 +111,4 @@ class PromoModel extends BaseModel
 
         return $builder->get()->getResultArray();
     }
-
-
 }
