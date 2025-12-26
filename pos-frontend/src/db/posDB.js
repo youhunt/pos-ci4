@@ -5,30 +5,25 @@ export const posDB = openDB('pos-db', 2, {
 
     // ===== v1 =====
     if (oldVersion < 1) {
-      if (!db.objectStoreNames.contains('products')) {
-        const store = db.createObjectStore('products', { keyPath: 'id' });
-        store.createIndex('barcode', 'barcode');
-        store.createIndex('name', 'name');
-        store.createIndex('category_id', 'category_id');
-      }
+      const productStore = db.createObjectStore('products', { keyPath: 'id' });
+      productStore.createIndex('barcode', 'barcode');
+      productStore.createIndex('name', 'name');
+      productStore.createIndex('category_id', 'category_id');
 
-      if (!db.objectStoreNames.contains('categories')) {
-        db.createObjectStore('categories', { keyPath: 'id' });
-      }
-
-      if (!db.objectStoreNames.contains('meta')) {
-        db.createObjectStore('meta', { keyPath: 'key' });
-      }
+      db.createObjectStore('categories', { keyPath: 'id' });
+      db.createObjectStore('meta', { keyPath: 'key' });
     }
 
-    // ===== v2 (PROMOS) =====
+    // ===== v2 PROMOS (FIXED) =====
     if (oldVersion < 2) {
-      if (!db.objectStoreNames.contains('promos')) {
-        const promoStore = db.createObjectStore('promos', { keyPath: 'id' });
-        promoStore.createIndex('product_id', 'product_id');
-        promoStore.createIndex('category_id', 'category_id');
-        promoStore.createIndex('active', 'active');
-      }
+      const promoStore = db.createObjectStore('promos', {
+        keyPath: 'product_id' // 🔥 INI KUNCINYA
+      });
+
+      promoStore.createIndex('promo_id', 'promo_id');
+      promoStore.createIndex('type', 'type');
+      promoStore.createIndex('active', 'active');
     }
   }
 });
+

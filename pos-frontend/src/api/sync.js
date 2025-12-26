@@ -79,31 +79,36 @@ export async function syncCategories(shopId) {
 }
 
 export async function syncPromos(shopId) {
-
   const res = await api.get('/promos/active', {
-    params: {
-      shop_id: shopId
-    }
+    params: { shop_id: shopId }
   });
 
-  const promos = res.data?.data || res.data || []
+  // Backend return MAP: { product_id: promoData }
+  const promoMap = res.data?.data || res.data;
 
-  const db = await posDB
-  const tx = db.transaction('promos', 'readwrite')
-  const store = tx.objectStore('promos')
-
-  for (const promo of promos) {
-    // PASTIKAN NUMBER
-    promo.id = Number(promo.id)
-    promo.product_id = promo.product_id ? Number(promo.product_id) : null
-    promo.category_id = promo.category_id ? Number(promo.category_id) : null
-    promo.active = Number(promo.active)
-
-    await store.put(promo)
+  if (!promoMap || typeof promoMap !== 'object') {
+    console.warn('No promo data');
+    return;
   }
 
-  await tx.done
+  const db = await posDB;
+  const tx = db.transaction('promos', 'readwrite');
+  const store = tx.objectStore('promos');
 
-  console.log('PROMOS SYNCED:', promos.length)
+  // 🔥 INI KUNCINYA
+  for (const [productId, promo] of Object.entries(promoMap)) {
+    await store.put({
+      product_id: Number(productId), // PRIMARY KEY
+      promo_id: Number(promo.promo_id),
+      type: promo.type,
+      value: Number(promo.value),
+    });
+  }
+
+  await tx.done;
+
+  console.log('PROMOS SYNCED:', Object.keys(promoMap).length);
 }
+
+
 

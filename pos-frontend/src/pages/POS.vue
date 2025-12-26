@@ -62,7 +62,7 @@ import { syncProducts, syncCategories } from "../api/sync";
 import { useProductStore } from "../stores/productStore";
 import { useCategoryStore } from "../stores/categoryStore";
 import { syncPromos } from "../api/sync";
-import { usePromoStore } from "../stores/promo";
+import { usePromoStore } from "../stores/promoStore";
 
 import SearchBar from "../components/pos/SearchBar.vue";
 import ProductGrid from "../components/pos/ProductGrid.vue";
@@ -84,17 +84,33 @@ const promoStore = usePromoStore();
 onMounted(async () => {
   const shopId = 2;
 
+  try {
+    console.log('POS mounted start');
   // 1. Sync dari server
-  await syncCategories(shopId);
-  await syncProducts(shopId);
-  await syncPromos(shopId);
-  await promoStore.loadFromLocal();
+    await syncCategories(shopId);
+    console.log("Categories synced");
 
-  console.log("PROMOS READY:", promoStore.items);
+    await syncProducts(shopId);
+    console.log("Products synced");
 
-  // 2. Load dari local DB
-  await categoryStore.loadFromLocal();
-  await products.loadFromLocal();
+    await syncPromos(shopId);
+    console.log("Promos synced");
+
+    // 2. Load dari local DB
+    await categoryStore.loadFromLocal();
+    console.log("Categories loaded from local");
+
+    await products.loadFromLocal();
+    console.log("Products loaded from local");
+
+    await promoStore.loadFromLocal();
+    console.log("Promos loaded from local");
+
+    console.log('POS mounted end');
+  } catch (e) {
+    console.error("POS MOUNT ERROR:", e);
+    alert("Gagal memuat data POS");
+  }
 
   //window.addEventListener("keydown", onKeydown);
   document.addEventListener("keyup", onKeyup);

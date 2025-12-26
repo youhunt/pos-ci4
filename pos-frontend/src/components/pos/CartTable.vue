@@ -23,7 +23,7 @@
             v-if="getPromo(item)"
             class="text-xs text-red-600"
           >
-            Promo -{{ getPromo(item).discount_value }}%
+            Promo -{{ getPromo(item).value }}%
           </div>
         </td>
 
@@ -74,23 +74,24 @@
 
 <script setup>
 import { useCartStore } from '../../stores/cart'
-import { usePromoStore } from '../../stores/promo'
+import { usePromoStore } from '../../stores/promoStore'
 
 const cart = useCartStore()
 const promoStore = usePromoStore()
 
 function getPromo(item) {
-  return promoStore.getPromoForProduct(item.product_id)
+  return promoStore.getByProduct(item.product_id)
 }
 
 function getDiscount(item) {
   const promo = getPromo(item)
   if (!promo) return 0
 
-  if (promo.discount_type === 'percent') {
-    return item.price * item.qty * (promo.discount_value / 100)
+  if (promo.type === 'percent') {
+    return item.price * item.qty * (promo.value / 100)
   }
 
   return 0
 }
+
 </script>

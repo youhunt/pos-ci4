@@ -26,6 +26,21 @@ export const useCartStore = defineStore("cart", {
     isEmpty(state) {
       return state.items.length === 0;
     },
+
+    getItemDiscount(item) {
+      const promo = promoStore.getByProduct(item.product_id)
+      if (!promo) return 0
+
+      if (promo.type === 'percent') {
+        return item.price * item.qty * (promo.value / 100)
+      }
+
+      return 0
+    },
+
+    getItemTotal(item) {
+      return (item.price * item.qty) - this.getItemDiscount(item)
+    },
   },
 
   actions: {

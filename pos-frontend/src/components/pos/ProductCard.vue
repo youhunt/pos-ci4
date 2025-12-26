@@ -1,20 +1,20 @@
 <template>
   <div
-    class="border rounded-lg p-3 bg-white shadow transition relative"
+    class="relative border rounded-lg p-3 bg-white shadow transition"
     :class="{
       'cursor-pointer hover:shadow-md': product.stock > 0,
       'opacity-50 cursor-not-allowed': product.stock <= 0
     }"
     @click="handleClick"
   >
-    <!-- BADGE PROMO -->
+    <!-- 🔥 BADGE PROMO -->
     <div
-      v-if="promo"
-      class="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded"
+      v-if="hasPromo"
+      class="absolute top-1 right-1 bg-red-500 text-white text-xs px-2 py-1 rounded"
     >
-      -{{ promo.discount_value }}%
+      {{ promo.type === 'percent' ? `-${promo.value}%` : 'PROMO' }}
     </div>
-
+    
     <div class="font-semibold text-gray-700">
       {{ product.name }}
     </div>
@@ -37,27 +37,34 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { usePromoStore } from '../../stores/promo'
+import { computed } from 'vue';
+import { usePromoStore } from '../../stores/promoStore';
 
 const props = defineProps({
   product: {
     type: Object,
     required: true
   }
+});
+
+const emit = defineEmits(['select']);
+
+const promoStore = usePromoStore();
+
+// 🔥 CEK APAKAH PRODUK INI PUNYA PROMO
+
+const promo = computed(() => {
+  return promoStore.getByProduct(props.product.id)
 })
 
-const emit = defineEmits(['select'])
-const promoStore = usePromoStore()
-
-const promo = computed(() =>
-  promoStore.getPromoForProduct(props.product.id)
-)
+const hasPromo = computed(() => {
+  return !!promo.value
+})
 
 function handleClick() {
-  if (props.product.stock <= 0) {
-    return
-  }
-  emit('select', props.product)
+  if (props.product.stock <= 0) return;
+  emit('select', props.product);
 }
+
 </script>
+
