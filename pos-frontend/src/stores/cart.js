@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { checkoutCart } from "../api/pos";
+import { usePromoStore } from "../stores/promoStore";
 
 export const useCartStore = defineStore("cart", {
   state: () => ({
@@ -15,8 +16,20 @@ export const useCartStore = defineStore("cart", {
       );
     },
 
-    discount() {
-      return 0;
+    // 🔥 DISKON TOTAL CART
+    discount(state) {
+      const promoStore = usePromoStore();
+
+      return state.items.reduce((sum, item) => {
+        const promo = promoStore.getByProduct(item.product_id);
+        if (!promo) return sum;
+
+        if (promo.type === "percent") {
+          return sum + item.price * item.qty * (promo.value / 100);
+        }
+
+        return sum;
+      }, 0);
     },
 
     total() {
@@ -28,18 +41,18 @@ export const useCartStore = defineStore("cart", {
     },
 
     getItemDiscount(item) {
-      const promo = promoStore.getByProduct(item.product_id)
-      if (!promo) return 0
+      const promo = promoStore.getByProduct(item.product_id);
+      if (!promo) return 0;
 
-      if (promo.type === 'percent') {
-        return item.price * item.qty * (promo.value / 100)
+      if (promo.type === "percent") {
+        return item.price * item.qty * (promo.value / 100);
       }
 
-      return 0
+      return 0;
     },
 
     getItemTotal(item) {
-      return (item.price * item.qty) - this.getItemDiscount(item)
+      return item.price * item.qty - this.getItemDiscount(item);
     },
   },
 
