@@ -2,12 +2,29 @@
 import { onMounted, ref } from 'vue';
 import { fetchDashboardSummary } from '../../api/dashboard';
 import { formatRupiah } from '../../utils/format';
+import { getShopId } from '../../utils/shop';
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const summary = ref(null);
 
 onMounted(async () => {
-  const res = await fetchDashboardSummary(1);
-  summary.value = res.data.data;
+  
+  const shopId = await getShopId();
+  
+  try {  
+    const res = await fetchDashboardSummary(shopId);
+    summary.value = res.data.data;
+  }
+  catch (err)
+  {
+    console.error("POS INIT ERROR:", err);
+
+    alert("Silakan login dulu");
+
+    router.push("/login");
+  }
 });
 </script>
 

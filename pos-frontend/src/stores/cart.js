@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { checkoutCart } from "../api/pos";
 import { usePromoStore } from "../stores/promoStore";
+import { getShopId } from "../utils/shop";
 
 export const useCartStore = defineStore("cart", {
   state: () => ({
@@ -91,7 +92,7 @@ export const useCartStore = defineStore("cart", {
       }
 
       const payload = {
-        shop_id: 2,
+        shop_id: await getShopId(),
         paid: payment.paid,
         change: payment.change,
         payment_method: "cash",

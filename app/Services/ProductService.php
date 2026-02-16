@@ -15,9 +15,17 @@ class ProductService
 
     public function sync(int $shopId, ?string $since = null): array
     {
+        $items = $this->repo->getForSync($shopId, $since);
+
+        $lastSync = null;
+
+        if (!empty($items)) {
+            $lastSync = max(array_column($items, 'updated_at'));
+        }
+
         return [
-            'last_sync' => date('Y-m-d H:i:s'),
-            'products'  => $this->repo->getForSync($shopId, $since),
+            'last_sync' => $lastSync,
+            'products'  => $items,
         ];
     }
 }

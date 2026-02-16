@@ -20,9 +20,16 @@ class ProductSyncService
     {
         $items = $this->repo->getForSync($shopId, $since, $limit);
 
+        // hitung last_sync dari data sebenarnya
+        $lastSync = $since;
+
+        if (!empty($items)) {
+            $lastSync = max(array_column($items, 'updated_at'));
+        }
+
         return [
             'count'     => count($items),
-            'last_sync' => date('Y-m-d H:i:s'),
+            'last_sync' => $lastSync,
             'items'     => $items
         ];
     }

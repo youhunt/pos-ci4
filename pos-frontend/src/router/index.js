@@ -45,40 +45,48 @@ export const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token');
-  const role  = localStorage.getItem('role');
+import axios from "axios";
 
-  // =========================
-  // 1. HALAMAN PUBLIK
-  // =========================
-  if (to.path === '/login') {
-    // kalau sudah login, jangan balik ke login
-    if (token) {
-      return next(role === 'admin' ? '/admin/dashboard' : '/pos');
+router.beforeEach(async (to, from, next) => {
+
+  // halaman publik
+  if (to.path === "/login") {
+
+    try {
+
+      await axios.get("/api/user/me");
+
+      return next("/admin/dashboard");
+
     }
-    return next();
+    catch {
+
+      return next();
+
+    }
+
   }
 
-  // =========================
-  // 2. WAJIB LOGIN
-  // =========================
-  if (!token) {
-    return next('/login');
+  // halaman protected
+  try {
+
+    const res = await axios.get("/api/user/me");
+
+    const role = res.data?.data?.role ?? res.data?.role;
+
+    // role check optional
+    if (to.path.startsWith("/admin") && role !== "admin") {
+      return next("/pos");
+    }
+
+    next();
+
+  }
+  catch {
+
+    next("/login");
+
   }
 
-  // =========================
-  // 3. ROLE CHECK
-  // =========================
-  const requiredRole = to.matched.find(r => r.meta?.role)?.meta?.role;
-
-  if (requiredRole && role !== requiredRole) {
-    // kasir nyasar ke admin → balik ke POS
-    if (role === 'cashier') return next('/pos');
-
-    // admin nyasar ke POS (boleh atau tidak, pilihan UX)
-    if (role === 'admin') return next('/admin/dashboard');
-  }
-
-  next();
 });
+

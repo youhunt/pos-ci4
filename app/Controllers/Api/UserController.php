@@ -3,6 +3,7 @@
 namespace App\Controllers\Api;
 
 use \Myth\Auth\Models\UserModel;
+use App\Controllers\BaseController;
 use \Myth\Auth\Password;
 use \Myth\Auth\Entities\User;
 use \Myth\Auth\Authorization\GroupModel;
@@ -175,4 +176,26 @@ class UserController extends BaseController
         return redirect()->to('/users')->with('message', 'User berhasil dihapus.');
     }
 
+    public function me()
+    {
+        $auth = service('authentication');
+        
+        if (!$auth->check()) {
+
+            return $this->response
+                ->setStatusCode(401)
+                ->setJSON([
+                    'status' => 'error',
+                    'message' => 'Unauthorized'
+                ]);
+        }
+        
+        $user = $auth->user();
+
+        return $this->response->setJSON([
+            'id' => $user->id,
+            'username' => $user->username,
+            'shop_id' => $user->shop_id
+        ]);
+    }
 }

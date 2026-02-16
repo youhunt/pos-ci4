@@ -2,32 +2,86 @@ import { defineStore } from 'pinia';
 import { posDB } from '../db/posDB';
 
 export const useProductStore = defineStore('products', {
+
   state: () => ({
     items: [],
-    loading: false
+    loading: false,
+    lastLoadedAt: null
   }),
 
   actions: {
-    async loadFromLocal() {
+
+    // =========================
+    // LOAD FROM INDEXEDDB
+    // =========================
+    async loadFromLocal(force = false)
+    {
       this.loading = true;
-      const db = await posDB;
-      this.items = await db.getAll('products');
+
+      try {
+
+        const db = await posDB;
+
+        const items = await db.getAll('products');
+
+        // 🔥 FIX REACTIVITY: replace reference properly
+        this.items = [];
+
+        this.items = [...items];
+
+        this.lastLoadedAt = Date.now();
+
+        console.log("PRODUCT STORE LOADED:", this.items.length);
+
+      }
+      catch (err)
+      {
+        console.error("LOAD PRODUCTS FAILED:", err);
+      }
+
       this.loading = false;
+
     },
 
-    async findByBarcode(barcode) {
+
+    // =========================
+    // FIND BY BARCODE
+    // =========================
+    async findByBarcode(barcode)
+    {
       const db = await posDB;
-      return db.getFromIndex('products', 'barcode', barcode);
+
+      const product = await db.getFromIndex('products', 'barcode', barcode);
+
+      return product || null;
     },
 
-    search(q) {
+
+    // =========================
+    // SEARCH
+    // =========================
+    search(q)
+    {
+      if (!q) return this.items;
+
       q = q.toLowerCase();
-      return this.items.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.sku.toLowerCase().includes(q) ||
-          (p.barcode && p.barcode.includes(q))
+
+      return this.items.filter(p =>
+        p.name?.toLowerCase().includes(q) ||
+        p.sku?.toLowerCase().includes(q) ||
+        p.barcode?.includes(q)
       );
     },
+
+
+    // =========================
+    // FORCE REFRESH
+    // =========================
+    async refresh()
+    {
+      await this.loadFromLocal(true);
+    }
+
   }
+
 });

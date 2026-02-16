@@ -71,6 +71,16 @@ $routes->group('api', ['filter' => 'cors', 'namespace' => 'App\Controllers\Api']
 
 });
 
+// 🔐 ROUTES YANG BUTUH LOGIN
+$routes->group('api', [
+    'filter' => ['cors', 'login'],
+    'namespace' => 'App\Controllers\Api'
+], function ($routes) {
+
+    $routes->get('user/me', 'UserController::me');
+
+});
+
 $routes->group('api/sync', [
     'filter'    => 'cors',
     'namespace' => 'App\Controllers\Api\Sync'

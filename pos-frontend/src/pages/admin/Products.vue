@@ -2,12 +2,13 @@
 import { ref, onMounted } from 'vue';
 import { fetchProducts, updateProduct } from '../../api/admin/products';
 import { formatRupiah } from '../../utils/format';
+import { getShopId } from '../../utils/shop';
 
 const products = ref([]);
 const search = ref('');
 
 async function load() {
-  const res = await fetchProducts(1, search.value);
+  const res = await fetchProducts(await getShopId(), search.value);
   products.value = res.data.data;
 }
 
