@@ -17,14 +17,14 @@ const routes = [
   },
 
   {
-    path: '/admin',
+    path: "/admin",
     component: AppLayout,
     children: [
-      { path: 'dashboard', component: Dashboard },
-      { path: 'products', component: Products },
-      { path: 'reports', component: Reports },
-      { path: 'settings', component: Settings },
-    ]
+      { path: "dashboard", component: Dashboard },
+      { path: "products", component: Products },
+      { path: "reports", component: Reports },
+      { path: "settings", component: Settings },
+    ],
   },
 
   {
@@ -37,7 +37,6 @@ const routes = [
     path: "/:pathMatch(.*)*",
     redirect: "/pos",
   },
-
 ];
 
 export const router = createRouter({
@@ -45,48 +44,28 @@ export const router = createRouter({
   routes,
 });
 
-import axios from "axios";
+// ========================================
+// AUTH GUARD (PAKAI localStorage)
+// ========================================
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach((to, from, next) => {
+  const user = localStorage.getItem("user");
 
-  // halaman publik
-  if (to.path === "/login") {
+  // kalau belum login
+  if (!user && to.path !== "/login") {
+    return next("/login");
+  }
 
-    try {
+  // kalau sudah login dan buka login page
+  if (user && to.path === "/login") {
+    const parsed = JSON.parse(user);
 
-      await axios.get("/api/user/me");
-
+    if (parsed.role === "admin") {
       return next("/admin/dashboard");
-
-    }
-    catch {
-
-      return next();
-
     }
 
+    return next("/pos");
   }
 
-  // halaman protected
-  try {
-
-    const res = await axios.get("/api/user/me");
-
-    const role = res.data?.data?.role ?? res.data?.role;
-
-    // role check optional
-    if (to.path.startsWith("/admin") && role !== "admin") {
-      return next("/pos");
-    }
-
-    next();
-
-  }
-  catch {
-
-    next("/login");
-
-  }
-
+  next();
 });
-
