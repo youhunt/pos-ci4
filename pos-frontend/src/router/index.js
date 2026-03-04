@@ -49,23 +49,12 @@ export const router = createRouter({
 // ========================================
 
 router.beforeEach((to, from, next) => {
+
   const user = localStorage.getItem("user");
 
-  // kalau belum login
-  if (!user && to.path !== "/login") {
-    return next("/login");
-  }
+  if (to.path === "/login") return next();
 
-  // kalau sudah login dan buka login page
-  if (user && to.path === "/login") {
-    const parsed = JSON.parse(user);
-
-    if (parsed.role === "admin") {
-      return next("/admin/dashboard");
-    }
-
-    return next("/pos");
-  }
+  if (!user) return next("/login");
 
   next();
 });

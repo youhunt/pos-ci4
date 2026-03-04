@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import axios from "axios";
 
 const router = useRouter();
 
@@ -8,7 +9,8 @@ const username = ref("");
 const password = ref("");
 const loading = ref(false);
 
-function login() {
+async function login() {
+
   if (!username.value || !password.value) {
     alert("Username & password wajib diisi");
     return;
@@ -16,24 +18,42 @@ function login() {
 
   loading.value = true;
 
-  /**
-   * 🔴 SEMENTARA (DEV MODE)
-   * ganti ini nanti dengan API call CI4
-   */
-  setTimeout(() => {
-    // contoh user
-    if (username.value === "admin") {
-      localStorage.setItem("token", "dev-token");
-      localStorage.setItem("role", "admin");
+  try {
+    const res = await fetch("http://localhost:8080/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: username.value,
+        password: password.value,
+      }),
+    });
+
+    const result = await res.json();
+
+    if (!result.status) {
+      alert(result.message);
+      loading.value = false;
+      return;
+    }
+
+    // 🔥 Simpan sebagai "user" karena router guard baca ini
+    localStorage.setItem("user", JSON.stringify(result.data));
+
+    if (result.data.role === "admin") {
       router.push("/admin/dashboard");
     } else {
-      localStorage.setItem("token", "dev-token");
-      localStorage.setItem("role", "cashier");
       router.push("/pos");
     }
 
-    loading.value = false;
-  }, 500);
+  } catch (err) {
+    console.error(err);
+    alert("Server tidak bisa diakses");
+  }
+
+  loading.value = false;
+
 }
 </script>
 

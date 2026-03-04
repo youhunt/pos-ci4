@@ -1,7 +1,23 @@
 <script setup>
 import { ref } from 'vue';
 
+import { useRouter } from "vue-router";
+import axios from "axios";
+
+const router = useRouter();
 const showMenu = ref(false);
+
+async function logout() {
+  try {
+    await axios.post("/api/logout");
+  } catch (e) {
+    // abaikan kalau gagal
+  }
+
+  localStorage.removeItem("user");
+  router.push("/login");
+}
+
 </script>
 
 <template>
@@ -99,6 +115,12 @@ const showMenu = ref(false);
           </router-link>
         </nav>
 
+        <button
+            @click="logout"
+            class="mt-auto bg-red-500 text-white px-3 py-2 rounded"
+          >
+            Logout
+        </button>
         <router-link
           to="/pos"
           class="block mt-6 text-center bg-blue-600 text-white py-2 rounded"
